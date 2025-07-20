@@ -9,7 +9,7 @@ import MarketingManager from "../components/admin/MarketingManager";
 
 // Protected route component for admin routes
 const RequireAdminAuth = () => {
-  const isAuthenticated = localStorage.getItem('adminToken') !== null;
+  const isAuthenticated = sessionStorage.getItem('token') !== null;
   
   if (!isAuthenticated) {
     // Redirect to login if not authenticated
@@ -44,39 +44,23 @@ const routes = [
                     {
                         path: "",
                         element: <DashboardHome />,
-                    }
-                ]
-            },
-            {
-                path: "blogs",
-                element: <AdminDashboard />,
-                children: [
+                    },
                     {
-                        path: "",
+                        path:"blogs",
                         element: <BlogManager />,
-                    }
-                ]
-            },
-            {
-                path: "services",
-                element: <AdminDashboard />,
-                children: [
+                    },
                     {
-                        path: "",
+
+                        path: "services",
                         element: <ServiceManager />,
-                    }
-                ]
-            },
-            {
-                path: "marketing",
-                element: <AdminDashboard />,
-                children: [
+                    },
                     {
-                        path: "",
+                        path: "marketing",
                         element: <MarketingManager />,
                     }
                 ]
-            }
+            },
+            
         ]
     },
     {

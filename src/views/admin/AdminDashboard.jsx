@@ -21,7 +21,7 @@ const AdminDashboard = () => {
 
   const handleLogout = () => {
     // Clear authentication data
-    localStorage.removeItem('adminToken');
+    localStorage.removeItem('token');
     localStorage.removeItem('adminUser');
     
     // Redirect to login page
@@ -35,22 +35,22 @@ const AdminDashboard = () => {
   const navItems = [
     { 
       name: 'Dashboard', 
-      path: '/admin/dashboard', 
+      path: '', 
       icon: <LayoutDashboard className="h-5 w-5" /> 
     },
     { 
       name: 'Blogs', 
-      path: '/admin/blogs', 
+      path: 'blogs', 
       icon: <FileText className="h-5 w-5" /> 
     },
     { 
       name: 'Services', 
-      path: '/admin/services', 
+      path: 'services', 
       icon: <Settings className="h-5 w-5" /> 
     },
     { 
       name: 'Marketing', 
-      path: '/admin/marketing', 
+      path: 'marketing', 
       icon: <Megaphone className="h-5 w-5" /> 
     }
   ];

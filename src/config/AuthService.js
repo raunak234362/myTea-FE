@@ -1,19 +1,18 @@
 /* eslint-disable no-unused-vars */
 import api from "./api";
-import axios from "axios";
 
 class AuthService {
-  static async login({ username, password }) {
+  static async login(data) {
+    console.log("Login attempt with username:", data.email);
+    console.log("Login attempt with username:", data.password);
     try {
-      const formData = new URLSearchParams();
-      formData.append("email", username.toUpperCase());
-      formData.append("password", password);
-
-      const response = await api.post(`/api/auth/login/`, formData, {
+      const response = await api.post(`/api/auth/login/`, data,
+         {
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
         },
       });
+      console.log("Login response:", response);
       if (response.status === 400) {
         throw new Error("Invalid Credentials");
       }

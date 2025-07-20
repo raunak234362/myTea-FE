@@ -1,111 +1,44 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { Eye, EyeOff, LogIn } from "lucide-react";
+import AuthService from "../../config/AuthService";
 
 const AdminLogin = () => {
-  const [credentials, setCredentials] = useState({
-    username: "",
-    password: "",
-  });
-  const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [authError, setAuthError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [authError, setAuthError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
-  const validateForm = () => {
-    const newErrors = {};
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-    if (!credentials.username.trim()) {
-      newErrors.username = "Username is required";
-    }
-
-    if (!credentials.password) {
-      newErrors.password = "Password is required";
-    } else if (credentials.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCredentials({
-      ...credentials,
-      [name]: value,
-    });
-
-    // Clear field-specific error when user types
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: "",
-      });
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Clear any previous auth errors
+  const login = async (data) => {
     setAuthError("");
-
-    // Validate form
-    if (!validateForm()) {
-      return;
-    }
-
     setLoading(true);
-
     try {
-      // This is a placeholder for actual API call
-      // Replace with actual API implementation
-      const response = await mockLoginAdmin(credentials);
-
-      // Store token in localStorage or context
-      localStorage.setItem("adminToken", response.token);
-      localStorage.setItem("adminUser", JSON.stringify(response.user));
-
-      // Redirect to admin dashboard
+      const user = await AuthService.login(data);
+      const token = user.token;
+      const userId= user.user.id;
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("userId", userId);
       navigate("/admin/dashboard");
     } catch (error) {
       setAuthError(
-        error.message ||
-          "Login failed. Please check your credentials and try again."
+        error.message === "Invalid Credentials"
+          ? "Invalid username or password."
+          : "Could not connect to server. Try again later."
       );
     } finally {
       setLoading(false);
     }
-  };
-
-  // Mock login function - replace with actual API call
-  const mockLoginAdmin = async (credentials) => {
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Simulate authentication logic (replace with actual API call)
-    if (
-      credentials.username === "admin" &&
-      credentials.password === "password123"
-    ) {
-      return {
-        token: "mock-jwt-token",
-        user: {
-          id: 1,
-          username: "admin",
-          role: "admin",
-        },
-      };
-    } else {
-      throw new Error("Invalid credentials");
-    }
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
@@ -124,27 +57,26 @@ const AdminLogin = () => {
           </div>
         )}
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-6" onSubmit={handleSubmit(login)}>
           <div>
             <label
               htmlFor="username"
               className="block text-sm font-medium text-gray-700"
             >
-              Username
+              Email
             </label>
             <input
               id="username"
-              name="username"
-              type="text"
-              autoComplete="username"
-              value={credentials.username}
-              onChange={handleChange}
+              type="email"
+              {...register("email", { required: "Email is required" })}
               className={`mt-1 block w-full rounded-md border ${
                 errors.username ? "border-red-500" : "border-gray-300"
               } px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
             {errors.username && (
-              <p className="mt-1 text-sm text-red-600">{errors.username}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {errors.username.message}
+              </p>
             )}
           </div>
 
@@ -158,11 +90,8 @@ const AdminLogin = () => {
             <div className="relative mt-1">
               <input
                 id="password"
-                name="password"
                 type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                value={credentials.password}
-                onChange={handleChange}
+                {...register("password", { required: "Password is required" })}
                 className={`block w-full rounded-md border ${
                   errors.password ? "border-red-500" : "border-gray-300"
                 } px-3 py-2 pr-10 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
@@ -180,7 +109,9 @@ const AdminLogin = () => {
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {errors.password.message}
+              </p>
             )}
           </div>
 
