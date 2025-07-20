@@ -1,19 +1,34 @@
-import React, { useState } from "react";
-import { CheckCircle } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import ServiceTabs from "./ServiceTabs";
 import ServiceTabContent from "./ServiceTabContent";
-
-const servicesTabs = [
-  "Digital Marketing",
-  "Social Media",
-  "Performance",
-  "Photography & Video",
-  "Branding",
-  "Web Development",
-];
+import Service from "../../config/Service";
 
 const ServiceSection = () => {
   const [activeTab, setActiveTab] = useState("Digital Marketing");
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const fetchServices = async () => {
+    try {
+      const response = await Service.getAllServices();
+      setServices(response || []);
+      if (response.length > 0) {
+        setActiveTab(response[0].category); // Set first tab by default
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setError("Failed to fetch services.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const servicesTabs = [...new Set(services.map((service) => service.type))];
 
   return (
     <section className="bg-white py-20 px-4 lg:px-20">
@@ -25,14 +40,20 @@ const ServiceSection = () => {
           online presence and drive measurable results for your business.
         </p>
 
-        <ServiceTabs
-          servicesTabs={servicesTabs}
-          setActiveTab={setActiveTab}
-          activeTab={activeTab}
-        />
-        <ServiceTabContent activeTab={activeTab} />
-
-        
+        {loading ? (
+          <p className="text-gray-500">Loading...</p>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : (
+          <>
+            <ServiceTabs
+              servicesTabs={servicesTabs}
+              setActiveTab={setActiveTab}
+              activeTab={activeTab}
+            />
+            <ServiceTabContent activeTab={activeTab} services={services} />
+          </>
+        )}
       </div>
     </section>
   );
