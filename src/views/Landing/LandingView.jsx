@@ -1,5 +1,5 @@
 import React from "react";
-import { AboutSection, HeroSection, Navbar, ServiceSection } from "../../components";
+import { AboutSection, HeroSection, MarketingSection, Navbar, ServiceSection } from "../../components";
 
 const LandingView = () => {
   return (
@@ -8,6 +8,7 @@ const LandingView = () => {
       <HeroSection/>
       <AboutSection/>
       <ServiceSection/>
+      <MarketingSection/>
     </div>
   );
 };

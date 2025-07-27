@@ -4,7 +4,7 @@ import ServiceTabContent from "./ServiceTabContent";
 import Service from "../../config/Service";
 
 const ServiceSection = () => {
-  const [activeTab, setActiveTab] = useState("Digital Marketing");
+  const [activeTab, setActiveTab] = useState("");
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -13,9 +13,8 @@ const ServiceSection = () => {
     try {
       const response = await Service.getAllServices();
       setServices(response || []);
-      if (response.length > 0) {
-        setActiveTab(response[0].category); // Set first tab by default
-      }
+      const firstTabType = response.length > 0 ? response[0].type : "";
+      setActiveTab(firstTabType);
     } catch (error) {
       console.error("Fetch error:", error);
       setError("Failed to fetch services.");

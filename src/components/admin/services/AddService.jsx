@@ -49,9 +49,16 @@ const AddService = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-5 backdrop-blur-sm flex justify-center items-center z-50">
-      <div className="bg-white h-[90%] md:h-[70%] overflow-y-auto md:p-5 p-2 rounded-lg shadow-lg w-11/12 md:w-8/12 space-y-2 ">
-        <h2 className="text-2xl font-semibold mb-4">Add New Service</h2>
-
+      <div className="bg-white h-[90%] md:h-[80%] overflow-y-auto md:p-5 p-2 rounded-lg shadow-lg w-11/12 md:w-8/12 space-y-2 ">
+        <div className="flex justify-between items-center mb-4 relative">
+          <h2 className="text-2xl font-semibold mb-4">Add New Service</h2>
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 bg-red-500 px-2 py-1 rounded-2xl text-white hover:text-gray-800"
+          >
+            Close
+          </button>
+        </div>
         {message && (
           <div className="mb-4 text-sm text-red-600 font-medium">{message}</div>
         )}
